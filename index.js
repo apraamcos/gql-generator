@@ -9,11 +9,12 @@ program
   .option('--schemaFilePath [value]', 'path of your graphql schema file')
   .option('--destDirPath [value]', 'dir you want to store the generated queries')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
+  .option('--duplicate [value]', 'duplicate check you want')
   .option('--ext [value]', 'extension file to use', 'gql')
   .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
   .parse(process.argv);
 
-const { depthLimit = 100, includeDeprecatedFields = false, ext: fileExtension } = program;
+const { depthLimit = 5, duplicate = 2, includeDeprecatedFields = false, ext: fileExtension } = program;
 
 const schemaFilePath = process.argv[2];
 const destDirPath = process.argv[3];
@@ -102,8 +103,14 @@ const generateQuery = (
 
   if (curType.getFields) {
     const crossReferenceKey = `${curParentName}To${curName}Key`;
-    if (crossReferenceKeyList.indexOf(crossReferenceKey) !== -1 || (fromUnion ? curDepth - 2 : curDepth) > depthLimit) {
-      console.log(crossReferenceKey);
+    let numOfOccure = 0;
+    crossReferenceKeyList.forEach((x) => {
+      if (x === crossReferenceKey) {
+        numOfOccure += 1;
+      }
+    });
+
+    if (numOfOccure > duplicate || (fromUnion ? curDepth - 2 : curDepth) > depthLimit) {
       return '';
     }
     if (!fromUnion) {
@@ -131,7 +138,6 @@ const generateQuery = (
       )
       .filter((cur) => Boolean(cur))
       .join('\n');
-    crossReferenceKeyList = [];
   }
 
   if (!(curType.getFields && !childQuery)) {
