@@ -124,14 +124,13 @@ const generateQuery = (
             curName,
             argumentsDict,
             duplicateArgCounts,
-            crossReferenceKeyList,
+            [...crossReferenceKeyList],
             curDepth + 1,
             fromUnion
           ).queryStr
       )
       .filter((cur) => Boolean(cur))
       .join('\n');
-    crossReferenceKeyList = [];
   }
 
   if (!(curType.getFields && !childQuery)) {
