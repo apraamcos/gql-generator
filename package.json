@@ -1,6 +1,6 @@
 {
   "name": "@apraamcos/gql-generator",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -22,9 +22,9 @@
   "author": "timqian",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/timqian/gql-generator/issues"
+    "url": "https://github.com/apraamcos/gql-generator/issues"
   },
-  "homepage": "https://github.com/timqian/gql-generator#readme",
+  "homepage": "https://github.com/apraamcos/gql-generator#readme",
   "dependencies": {
     "commander": "^2.15.1",
     "del": "^3.0.0",
