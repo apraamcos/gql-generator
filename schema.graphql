@@ -1,0 +1,1003 @@
+input ABNInput {
+  Abn: String
+  AbnStatus: String
+  AbnStatusEffectiveFrom: String
+  Acn: String
+  AddressDate: String
+  AddressPostcode: String
+  AddressState: String
+  BusinessName: [String!]
+  EntityName: String
+  EntityTypeCode: String
+  EntityTypeName: String
+  Gst: String
+  Message: String
+}
+
+type ABNOutput {
+  Abn: String
+  AbnStatus: String
+  AbnStatusEffectiveFrom: String
+  Acn: String
+  AddressDate: String
+  AddressPostcode: String
+  AddressState: String
+  BusinessName: [String!]
+  EntityName: String
+  EntityTypeCode: String
+  EntityTypeName: String
+  Gst: String
+  Message: String
+}
+
+input AXCustInvoicesInput {
+  accountId: String!
+  country: Country
+}
+
+type AXCustInvoicesOutput {
+  axInvoiceId: String
+  axInvoiceStatusCode: String
+  axInvoiceStatusText: String
+  docId: String
+  dueDate: String
+  exGSTAmount: Float
+  gstAmount: Float
+  invoiceAmount: Float
+  invoiceDate: String
+  invoiceId: String
+  portalInvoiceStatusCode: InvoicePaymentStatus
+}
+
+enum Access {
+  CMS
+  IDM
+}
+
+type Account {
+  accountId: String
+  accountNumber: String
+  address1_city: String
+  address1_country: String
+  address1_countryName: String
+  address1_line1: String
+  address1_line2: String
+  address1_line3: String
+  address1_postalCode: String
+  address1_stateOrProvince: String
+  businessNumber: String
+  companyNumber: String
+  isDeleted: Boolean
+  legalName: String
+  name: String
+  primaryContactId: String
+  tradingName: String
+  trustName: String
+  webSiteURL: String
+}
+
+input AddPortalActivitiesInput {
+  accountId: String!
+  contactId: String!
+  country: Country
+  description: String
+  name: String
+}
+
+type BusinessDetails {
+  abn: String
+  abnDetails: ABNOutput
+  accountId: String
+  acn: String
+  businessAddress: GoogleAddress
+  businessName: String
+  contact: ContactType!
+  country: String
+  invoiceContact: ContactType!
+  tradingName: String
+  website: String
+}
+
+input BusinessDetailsAsInput {
+  abn: String
+  abnDetails: ABNInput
+  accountId: String
+  acn: String
+  businessAddress: GoogleAddressAsInput
+  businessName: String
+  contact: ContactTypeAsInput!
+  country: String
+  invoiceContact: ContactTypeAsInput!
+  tradingName: String
+  website: String
+}
+
+type BusinessFormValues {
+  businessAddress: GoogleAddress
+  industry: String
+  startDate: String
+  subdivision: ParsedIndustrySubindustryScheme
+}
+
+input BusinessFormValuesAsInput {
+  businessAddress: GoogleAddressAsInput
+  industry: String
+  startDate: String
+  subdivision: ParsedIndustrySubindustrySchemeAsInput
+}
+
+input CalculateTariffAsInput {
+  calculatedValueWithGST: Float
+  calculatedValueWithoutGST: Float
+  description: String
+  gstAmount: Float
+  higherBound: Float
+  inputAmount: Float
+  inputNumber: Float
+  isCurrency: String
+  lowerBound: Float
+  tariffStructureId: String
+  tariffStructureVariableId: String
+  variableKey: String
+}
+
+type CalculateTariffOutput {
+  calculatedValueWithGST: Float
+  calculatedValueWithoutGST: Float
+  description: String
+  gstAmount: Float
+  higherBound: Float
+  inputAmount: Float
+  inputNumber: Float
+  isCurrency: String
+  lowerBound: Float
+  tariffStructureId: String
+  tariffStructureVariableId: String
+  variableKey: String
+}
+
+type Config {
+  key: String!
+  value: String!
+}
+
+type Connection {
+  accountId: String
+  connectionId: String
+  contactId: String
+}
+
+type Contact {
+  contactId: String!
+  firstName: String
+  jobTitle: String
+  lastName: String
+  mobilePhone: String
+  officePhone: String
+  otherPhone: String
+  postalAddress_City: String
+  postalAddress_Country: String
+  postalAddress_Line1: String
+  postalAddress_Line2: String
+  postalAddress_Line3: String
+  postalAddress_PostalCode: String
+  postalAddress_StateOrProvince: String
+  primaryEmail: String
+  streetAddress_City: String
+  streetAddress_Country: String
+  streetAddress_Line1: String
+  streetAddress_Line2: String
+  streetAddress_Line3: String
+  streetAddress_PostalCode: String
+  streetAddress_StateOrProvince: String
+}
+
+type ContactType {
+  address: GoogleAddress
+  contactId: String
+  email: String
+  firstName: String
+  jobTitle: String
+  lastName: String
+  phoneNumbers: [PhoneNumbers!]
+}
+
+input ContactTypeAsInput {
+  address: GoogleAddressAsInput
+  contactId: String
+  email: String
+  firstName: String
+  jobTitle: String
+  lastName: String
+  phoneNumbers: [PhoneNumbersAsInput!]
+}
+
+enum Country {
+  AU
+  NZ
+}
+
+input CreateAdminInput {
+  accesses: [Access!]!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: Role!
+}
+
+input CreateFinalLicensePart1Input {
+  businessDetails: BusinessDetailsAsInput!
+  connectionContact: ContactTypeAsInput!
+  licenseDetails: LicenseDetails!
+  locationDetails: [LocationTypeAsInput!]!
+  opportunityId: String
+  uniqueId: String!
+}
+
+type CreateFinalLicensePart1Output {
+  businessAccountId: String
+  connectionContactId: String
+  invoiceContactId: String
+  locationsIds: [CreateLocationsResultOutput!]
+  opportunityId: String
+  opportunityLicenceSchemesIds: [String!]
+  uniqueId: String!
+}
+
+input CreateFinalLicensePart1OutputAsInput {
+  businessAccountId: String
+  connectionContactId: String
+  invoiceContactId: String
+  locationsIds: [CreateLocationsResultOutputAsInput!]
+  opportunityId: String
+  opportunityLicenceSchemesIds: [String!]
+  uniqueId: String!
+}
+
+input CreateFinalLicensePart2Input {
+  businessDetails: BusinessDetailsAsInput!
+  connectionContact: ContactTypeAsInput!
+  finalLicencePart1: CreateFinalLicensePart1OutputAsInput
+  licenseDetails: LicenseDetails!
+  locationDetails: [LocationTypeAsInput!]!
+  opportunityId: String
+  paymentDetails: PaymentDetails!
+  uniqueId: String!
+}
+
+type CreateFinalLicensePart2Output {
+  axInvoiceId: String
+  businessAccountId: String
+  connectionContactId: String
+  connectionId: String
+  error: String
+  performance: String
+  quoteNumber: String
+  salesOrderId: Float
+  uniqueId: String
+}
+
+input CreateFinalLicensePart3Input {
+  axInvoiceId: String
+  connectionContact: ContactTypeAsInput!
+  licenseDetails: LicenseDetails!
+  paymentDetails: PaymentDetails!
+  uniqueId: String!
+}
+
+type CreateFinalLicensePart3Output {
+  axInvoiceId: String
+  uniqueId: String!
+}
+
+type CreateLocationsResultOutput {
+  crmLocationId: String
+  portalLocationId: String
+}
+
+input CreateLocationsResultOutputAsInput {
+  crmLocationId: String
+  portalLocationId: String
+}
+
+input CreatePortalUserInput {
+  email: String!
+  firstName: String
+  lastName: String
+}
+
+type CrmAccessDetails {
+  account: Account
+  connection: Connection
+}
+
+enum Currency {
+  AUD
+  NZD
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+input DevUpdateQuestionsInput {
+  mainSequenceQuestions: String!
+  sectionQuestions: String!
+  tariffMapping: String!
+}
+
+input DownloadAXCustInvoiceInput {
+  axInvoiceId: String!
+  documentId: String!
+}
+
+input DownloadStatementInput {
+  accountId: String!
+  fromDate: String
+}
+
+type GeneralOrphanedType {
+  knownErrorTypes: KnownErrorType!
+}
+
+input GetBusinessDetailsInput {
+  accountId: String!
+}
+
+input GetContactInput {
+  contactId: String!
+}
+
+input GetCreateFinalLicensePart2ResultInput {
+  uniqueId: String!
+}
+
+input GetDashboardOverviewInput {
+  accountId: String!
+  country: String!
+}
+
+type GetDashboardOverviewOutput {
+  customerBalance: Float
+  licensedLocations: [LicensedLocation!]
+}
+
+input GetInvoiceContactsInput {
+  accountId: String!
+}
+
+input GetOpportunityInput {
+  opportunityId: String!
+}
+
+input GetPaymentScheduleInput {
+  locations: [LocationTypeAsInput!]!
+}
+
+type GetPaymentScheduleOutput {
+  schedules: [PaymentSchedule!]!
+  total: Float!
+}
+
+input GetRelatedContactsInput {
+  accountId: String!
+}
+
+input GetTariffResultAsInput {
+  attributes: String!
+  businessMapping: JSONObject!
+  calculatedValueWithGST: Float
+  calculatedValueWithoutGST: Float
+  description: String
+  gstAmount: Float
+  higherBound: Float
+  inputAmount: Float
+  inputNumber: Float
+  isCurrency: String
+  lowerBound: Float
+  parsedAttributes: TariffAttributesInput!
+  sectionId: String
+  tariffDetails: [CalculateTariffAsInput!]
+  tariffStructureId: String
+  tariffStructureVariableId: String
+  variableKey: String
+}
+
+input GetTariffResultInput {
+  country: Country
+  location: LocationTypeAsInput!
+}
+
+type GetTariffResultOutput {
+  attributes: String!
+  businessMapping: JSONObject!
+  calculatedValueWithGST: Float
+  calculatedValueWithoutGST: Float
+  description: String
+  gstAmount: Float
+  higherBound: Float
+  inputAmount: Float
+  inputNumber: Float
+  isCurrency: String
+  lowerBound: Float
+  parsedAttributes: TariffAttributes!
+  sectionId: String
+  tariffDetails: [CalculateTariffOutput!]
+  tariffStructureId: String
+  tariffStructureVariableId: String
+  variableKey: String
+}
+
+input GetUserInvoicesInput {
+  country: String!
+}
+
+type GoogleAddress {
+  addressLine: String
+  administrative_area_level_1: String
+  country: String
+  formatted_address: String
+  locality: String
+  name: String
+  postal_code: String
+  route: String
+  street_number: String
+  sublocality_level_1: String
+  subpremise: String
+}
+
+input GoogleAddressAsInput {
+  addressLine: String
+  administrative_area_level_1: String
+  country: String
+  formatted_address: String
+  locality: String
+  name: String
+  postal_code: String
+  route: String
+  street_number: String
+  sublocality_level_1: String
+  subpremise: String
+}
+
+type IndustrySubdivisionConfig {
+  infoURL: String
+  tncURL: String
+}
+
+input IndustrySubdivisionConfigAsInput {
+  infoURL: String
+  tncURL: String
+}
+
+enum InvoicePaymentStatus {
+  PROCESSING
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+enum KnownErrorType {
+  API_GATEWAY_DEFAULT_5XX
+  API_GATEWAY_INTEGRATION_TIMEOUT
+  API_GATEWAY_UNAUTHORIZED
+  DASHBOARD_ERROR
+  GENERAL_ERROR
+  QUESTION_FLOW_ERROR
+  S3_ERROR
+  SHARED_ERROR
+  USER_OPERATION_ERROR
+}
+
+input LicenceSummary {
+  business: BusinessFormValuesAsInput!
+  licenceStartDate: String!
+  locationAmount: String!
+}
+
+input LicenseDetails {
+  config: String
+  country: Country
+  creditManagerId: String
+  endDate: DateTime
+  helpText: String
+  id: Float
+  industryClefId: String
+  industryIconName: String
+  industryName: String
+  industryOrder: Float
+  licenceSchemeCode: String
+  licenceSchemeName: String
+  otherInfo: String
+  ownerId: String
+  ownerIdName: String
+  ownerIdType: String
+  portalType: PortalType
+  startDate: DateTime!
+  status: QuestionStatus
+  subdivisionClefId: String
+  subdivisionName: String
+  subdivisionOrder: Float
+  transactionCurrency: Currency
+}
+
+type LicensedLocation {
+  industrySubDivision: String
+  industrySubdivisionScheme: ParsedIndustrySubindustryScheme
+  licensedLocationId: String!
+  lineEndDate: String
+  lineStartDate: String
+  locationAddress: String
+  locationDescription: String
+  locationTitle: String
+  tariffStructures: [LicensedLocationTariffStructure!]
+}
+
+input LicensedLocationInput {
+  country: String!
+  licenseeAccountId: String!
+}
+
+type LicensedLocationTariffStructure {
+  feeAmount: Float!
+  salesOrderLineId: Float
+  tariffDescription: String
+  tariffName: String
+  tariffStructureId: String!
+  tariffStructureVariables: [LicensedLocationTariffStructureVariable!]
+}
+
+type LicensedLocationTariffStructureVariable {
+  inputNumber: Float
+  staticName: String
+  tariffMappings: [TariffMapping!]
+  tariffStructureVariableId: String
+  tariffVariableDescription: String
+}
+
+type LocationType {
+  business: BusinessFormValues!
+  crmLocationId: String
+  id: String!
+  matchedTariffsSummary: [GetTariffResultOutput!]
+  musicUse: JSONObject!
+  questionFlow: QuestionFlow
+}
+
+input LocationTypeAsInput {
+  business: BusinessFormValuesAsInput!
+  crmLocationId: String
+  id: String!
+  matchedTariffsSummary: [GetTariffResultAsInput!]
+  musicUse: JSONObject!
+  questionFlow: QuestionFlowAsInput
+}
+
+type MainSequenceQuestions {
+  country: String!
+  id: Float
+  isOptional: Boolean
+  licenceSchemeCode: String!
+  licenceSchemeName: String!
+  otherInfo: String
+  section: SectionQuestions
+  sectionId: String!
+  seqOrder: Float!
+  status: QuestionStatus
+}
+
+input MainSequenceQuestionsInput {
+  country: String!
+  id: Float
+  isOptional: Boolean
+  licenceSchemeCode: String!
+  licenceSchemeName: String!
+  otherInfo: String
+  section: SectionQuestionsInput
+  sectionId: String!
+  seqOrder: Float!
+  status: QuestionStatus
+}
+
+# type Mutation {
+#   createAdminUserFromAdmin(createApraAdminInput: CreateAdminInput!): Boolean!
+#   createPortalUser(createPortalUserInput: CreatePortalUserInput!): User!
+#   createPortalUserFromAdmin(createPortalUserInput: CreatePortalUserInput!): Boolean
+#   deleteApraAdminByUid(uid: String!): Boolean
+#   recreatePendingPortalUser(uid: String!): String!
+#   removeAccountFromAdmin(uidOrEmail: String!): Boolean
+#   resetPortalUserPasswordFromAdmin(uid: String!): Boolean
+#   saveUserFirstNameAndLastName(
+#     saveUserFirstNameAndLastNameInput: SaveUserFirstNameAndLastNameInput!
+#   ): User!
+#   updateAdminUserAfterCompleteChallenge: User!
+#   updateAdminUserFromAdmin(updateAdminInput: UpdateAdminInput!): Boolean!
+#   updateBusinessDetails(updateBusinessDetailsInput: BusinessDetailsAsInput!): BusinessDetails!
+#   updatePortalInvoicePaymentStatus(
+#     updatePortalInvoicePaymentStatusInput: UpdatePortalInvoicePaymentStatusInput!
+#   ): Boolean!
+#   updatePortalInvoicePaymentStatusGetQuote(
+#     updatePortalInvoicePaymentStatusInput: UpdatePortalInvoicePaymentStatusInput!
+#   ): Boolean!
+#   updateQuestions(updateQuestionsInput: DevUpdateQuestionsInput!): String!
+#   updateUserAfterCompleteChallenge: User!
+#   updateUserEmailByUid(email: String!, uid: String!): User
+#   updateUserNameByUid(firstName: String!, lastName: String!, uid: String!): Boolean
+# }
+
+type Opportunity {
+  businessDetails: BusinessDetails
+  locations: [LocationType!]
+  opportunityId: String
+}
+
+type ParsedIndustrySubindustryScheme {
+  config: String
+  country: Country
+  creditManagerId: String
+  helpText: String
+  id: Float
+  industryClefId: String
+  industryIconName: String
+  industryName: String
+  industryOrder: Float
+  licenceSchemeCode: String
+  licenceSchemeName: String
+  otherInfo: String
+  ownerId: String
+  ownerIdName: String
+  ownerIdType: String
+  parsedConfig: IndustrySubdivisionConfig
+  status: QuestionStatus
+  subdivisionClefId: String
+  subdivisionName: String
+  subdivisionOrder: Float
+}
+
+input ParsedIndustrySubindustrySchemeAsInput {
+  config: String
+  country: Country
+  creditManagerId: String
+  helpText: String
+  id: Float
+  industryClefId: String
+  industryIconName: String
+  industryName: String
+  industryOrder: Float
+  licenceSchemeCode: String
+  licenceSchemeName: String
+  otherInfo: String
+  ownerId: String
+  ownerIdName: String
+  ownerIdType: String
+  parsedConfig: IndustrySubdivisionConfigAsInput
+  status: QuestionStatus
+  subdivisionClefId: String
+  subdivisionName: String
+  subdivisionOrder: Float
+}
+
+input PaymentDetails {
+  paymentFrequency: PaymentFrequency
+  paymentMethod: PaymentMethod
+}
+
+enum PaymentFrequency {
+  QUARTERLY
+  YEARLY
+}
+
+enum PaymentMethod {
+  LATER
+  NOW
+}
+
+type PaymentSchedule {
+  amount: Float!
+  endDate: String!
+  paymentDate: String!
+  startDate: String!
+}
+
+type PhoneNumbers {
+  number: String
+  type: PhoneType
+}
+
+input PhoneNumbersAsInput {
+  number: String
+  type: PhoneType
+}
+
+enum PhoneType {
+  mobilePhone
+  officePhone
+  otherPhone
+}
+
+enum PortalType {
+  OA
+  ON
+}
+
+type Query {
+  # abnLookup(abnInput: String!): ABNOutput
+  # addPortalActivities(addPortalActivitiesInput: AddPortalActivitiesInput!): Boolean!
+  # checkIfEmailExist(email: String!): Boolean!
+  # checkIfEmailExistFromAdmin(email: String!): Boolean!
+  # checkIfUserExists(email: String!): Boolean!
+  # checkIfUserHasAccess(email: String!): Boolean!
+  # createFinalLicensePart1(createFinalLicensePart1Input: CreateFinalLicensePart1Input!): CreateFinalLicensePart1Output
+  # createFinalLicensePart2(createFinalLicensePart2Input: CreateFinalLicensePart2Input!): Boolean
+  # createFinalLicensePart3(createFinalLicensePart3Input: CreateFinalLicensePart3Input!): CreateFinalLicensePart3Output
+  # downloadAXCustInvoice(downloadAXCustInvoiceInput: DownloadAXCustInvoiceInput!): String
+  # downloadStatement(downloadStatementInput: DownloadStatementInput!): String
+  # firstSignin(email: String!): SignInStatus!
+  # getAXCustInvoices(axCustInvoicesInput: AXCustInvoicesInput!): [AXCustInvoicesOutput!]
+  # getAdminUser: User!
+  # getApraAdmins: [User!]
+  # getBusinessDetails(getBusinessDetailsInput: GetBusinessDetailsInput!): BusinessDetails!
+  # getConfigs: [Config!]!
+  # getContact(getContactInput: GetContactInput!): Contact!
+  # getCreateFinalLicensePart2Result(getCreateFinalLicensePart2ResultInput: GetCreateFinalLicensePart2ResultInput!): CreateFinalLicensePart2Output
+  # getDashboardOverview(getDashboardOverviewInput: GetDashboardOverviewInput!): GetDashboardOverviewOutput!
+  # getIndustrySubdivision(country: String!): [ParsedIndustrySubindustryScheme!]
+  # getInvoiceContacts(getInvoiceContactsInput: GetInvoiceContactsInput!): [Contact!]!
+  # getLicensedLocations(licensedLocationInput: LicensedLocationInput!): [LicensedLocation!]!
+  # getOpportunity(getOpportunityInput: GetOpportunityInput!): Opportunity!
+  # getPaymentSchedule(getPaymentScheduleInput: GetPaymentScheduleInput!): GetPaymentScheduleOutput
+  getQuestionFlow(questionFlowInput: QuestionFlowInput!): QuestionFlow
+  # getRelatedContacts(getRelatedContactsInput: GetRelatedContactsInput!): [ContactType!]!
+  # getTariffResult(getTariffResultInput: GetTariffResultInput!): [GetTariffResultOutput!]
+  # getUser: User!
+  # getUserByEmail(email: String!): User
+  # getUserByUidFromAdmin(uid: String!): User
+  # getUserInvoices(getUserInvoicesInput: GetUserInvoicesInput!): [UserInvoicesOutput!]!
+  # searchUsersWithPagination(userSearchWithPaginationInput: UserSearchWithPaginationInput!): UserSearchWithPaginationOutput
+  # validateQuestionIds: [String!]
+}
+
+type QuestionFlow {
+  mainSequenceQuestions: [MainSequenceQuestions!]
+  sectionQuestions: [SectionQuestions!]
+}
+
+input QuestionFlowAsInput {
+  mainSequenceQuestions: [MainSequenceQuestionsInput!]
+  sectionQuestions: [SectionQuestionsInput!]
+}
+
+input QuestionFlowInput {
+  licenceSchemeCode: String!
+  licenceSchemeName: String!
+}
+
+enum QuestionStatus {
+  Active
+  Inactive
+  Pending
+}
+
+type QuestionType {
+  description: String
+  id: TypeStyle!
+  sectionQuestions: [SectionQuestions!]
+}
+
+input QuestionTypeInput {
+  description: String
+  id: TypeStyle!
+  sectionQuestions: [SectionQuestionsInput!]
+}
+
+enum Role {
+  Admin
+  Owner
+  SuperAdmin
+  User
+}
+
+input SaveUserFirstNameAndLastNameInput {
+  firstName: String!
+  lastName: String!
+}
+
+type SectionQuestions {
+  attributes: String
+  children: [String!]
+  id: String
+  mainSequenceQuestions: [MainSequenceQuestions!]
+  status: QuestionStatus
+  tariffMappings: [TariffMapping!]
+  type: QuestionType
+}
+
+input SectionQuestionsInput {
+  attributes: String
+  children: [String!]
+  id: String
+  mainSequenceQuestions: [MainSequenceQuestionsInput!]
+  status: QuestionStatus
+  tariffMappings: [TariffMappingInput!]
+  type: QuestionTypeInput
+}
+
+enum SignInStatus {
+  EXIST
+  INACTIVE_USER
+  MAX_RETRIES_REACHED
+  MEMBER_DECEASED
+  MORE_THAN_ONE
+  NOT_EXIST
+  SENT
+  USER_WITH_NO_ACCESS
+}
+
+type SummaryIncludes {
+  body: [String!]
+  label: String
+}
+
+input SummaryIncludesInput {
+  body: [String!]
+  label: String
+}
+
+type TariffAttributes {
+  breakdownLabel: String
+  breakdownSubHeader: String
+  hierarchy: String
+  isAllInclusiveSubset: Boolean
+  section: String
+  sectionIcon: String
+  subsection: String
+  summaryContent: String
+  summaryHeader: String
+  summaryIncludes: SummaryIncludes
+  summaryLabel: String
+  summarySubHeader: String
+  summaryTooltips: String
+  tariffStructure: [TariffStructureExcel!]
+}
+
+input TariffAttributesInput {
+  breakdownLabel: String
+  breakdownSubHeader: String
+  hierarchy: String
+  isAllInclusiveSubset: Boolean
+  section: String
+  sectionIcon: String
+  subsection: String
+  summaryContent: String
+  summaryHeader: String
+  summaryIncludes: SummaryIncludesInput
+  summaryLabel: String
+  summarySubHeader: String
+  summaryTooltips: String
+  tariffStructure: [TariffStructureExcelInput!]
+}
+
+type TariffMapping {
+  attributes: String!
+  businessMapping: String
+  country: Country!
+  id: Float!
+  licenceSchemeCode: String!
+  licenceSchemeName: String!
+  section: SectionQuestions!
+  sectionId: String
+  status: QuestionStatus!
+}
+
+input TariffMappingInput {
+  attributes: String!
+  businessMapping: String
+  country: Country!
+  id: Float!
+  licenceSchemeCode: String!
+  licenceSchemeName: String!
+  section: SectionQuestionsInput!
+  sectionId: String
+  status: QuestionStatus!
+}
+
+type TariffStructureExcel {
+  name: String!
+  value: String!
+  variableKey: String!
+}
+
+input TariffStructureExcelInput {
+  name: String!
+  value: String!
+  variableKey: String!
+}
+
+enum TypeStyle {
+  AddOrRemoveButton
+  Array
+  Button
+  ComboBox
+  ContextualMessage
+  CopyList
+  Dropdown
+  DynamicSequencer
+  InfoBox
+  InlineTooltip
+  InputBox
+  Modal
+  MultiSelectorChip
+  MultiSelectorGroup
+  Section
+  SingleSelectButtons
+  SingleSelectorChip
+  SingleSelectorGroup
+  TickBox
+  Typography
+}
+
+input UpdateAdminInput {
+  accesses: [Access!]
+  firstName: String
+  lastName: String
+  role: Role
+  uid: String!
+}
+
+input UpdatePortalInvoicePaymentStatusInput {
+  accountId: String!
+  amount: String
+  connectionContactId: String
+  id: Float
+  invoiceId: String!
+  licenceSummary: [LicenceSummary!]
+  onemusicIdEmail: String
+  paymentFrequency: PaymentFrequency
+  primaryRef: String
+  status: InvoicePaymentStatus
+}
+
+type User {
+  access: [Access!]!
+  crmAccess: [CrmAccessDetails!]
+  deletedDate: DateTime
+  email: String!
+  emailModifiedDate: DateTime
+  firstName: String
+  fullName: String!
+  idmSetupDate: DateTime
+  isDeleted: Boolean!
+  isIdmSetup: Boolean!
+  lastActiveDate: DateTime
+  lastName: String
+  role: Role!
+  status: UserStatus!
+  uid: String!
+}
+
+type UserInvoicesOutput {
+  accountId: String!
+  invoices: [AXCustInvoicesOutput!]
+}
+
+input UserSearchWithPaginationInput {
+  order: String = "ASC"
+  orderBy: String = "userName"
+  page: Int = 0
+  rowsPerPage: Int = 10
+  searchString: String!
+}
+
+type UserSearchWithPaginationOutput {
+  count: Int!
+  users: [User!]!
+}
+
+enum UserStatus {
+  Active
+  Inactive
+  Pending
+}
