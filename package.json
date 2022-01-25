@@ -3,9 +3,7 @@
   "version": "1.0.16",
   "description": "",
   "main": "index.js",
-  "bin": {
-    "gqlg": "index.js"
-  },
+  "bin": "index.js",
   "scripts": {
     "test": "mocha -u qunit",
     "lint": "./node_modules/.bin/eslint ./index.js"
