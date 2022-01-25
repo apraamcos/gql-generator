@@ -13,22 +13,26 @@ program
   .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
   .parse(process.argv);
 
-const {
-  schemaFilePath, destDirPath, depthLimit = 100, includeDeprecatedFields = false, ext: fileExtension,
-} = program;
+const { depthLimit = 100, includeDeprecatedFields = false, ext: fileExtension } = program;
+
+const schemaFilePath = process.argv[2];
+const destDirPath = process.argv[3];
+
 const typeDef = fs.readFileSync(schemaFilePath, 'utf-8');
 const source = new Source(typeDef);
 const gqlSchema = buildSchema(source);
 
 del.sync(destDirPath);
-path.resolve(destDirPath).split(path.sep).reduce((before, cur) => {
-  const pathTmp = path.join(before, cur + path.sep);
-  if (!fs.existsSync(pathTmp)) {
-    fs.mkdirSync(pathTmp);
-  }
-  return path.join(before, cur + path.sep);
-}, '');
-let indexJsExportAll = '';
+path
+  .resolve(destDirPath)
+  .split(path.sep)
+  .reduce((before, cur) => {
+    const pathTmp = path.join(before, cur + path.sep);
+    if (!fs.existsSync(pathTmp)) {
+      fs.mkdirSync(pathTmp);
+    }
+    return path.join(before, cur + path.sep);
+  }, '');
 
 /**
  * Compile arguments dictionary for a field
@@ -36,39 +40,38 @@ let indexJsExportAll = '';
  * @param duplicateArgCounts map for deduping argument name collisions
  * @param allArgsDict dictionary of all arguments
  */
-const getFieldArgsDict = (
-  field,
-  duplicateArgCounts,
-  allArgsDict = {},
-) => field.args.reduce((o, arg) => {
-  if (arg.name in duplicateArgCounts) {
-    const index = duplicateArgCounts[arg.name] + 1;
-    duplicateArgCounts[arg.name] = index;
-    o[`${arg.name}${index}`] = arg;
-  } else if (allArgsDict[arg.name]) {
-    duplicateArgCounts[arg.name] = 1;
-    o[`${arg.name}1`] = arg;
-  } else {
-    o[arg.name] = arg;
-  }
-  return o;
-}, {});
+const getFieldArgsDict = (field, duplicateArgCounts, allArgsDict = {}) =>
+  field.args.reduce((o, arg) => {
+    if (arg.name in duplicateArgCounts) {
+      const index = duplicateArgCounts[arg.name] + 1;
+      duplicateArgCounts[arg.name] = index;
+      o[`${arg.name}${index}`] = arg;
+    } else if (allArgsDict[arg.name]) {
+      duplicateArgCounts[arg.name] = 1;
+      o[`${arg.name}1`] = arg;
+    } else {
+      o[arg.name] = arg;
+    }
+    return o;
+  }, {});
 
 /**
  * Generate variables string
  * @param dict dictionary of arguments
  */
-const getArgsToVarsStr = dict => Object.entries(dict)
-  .map(([varName, arg]) => `${arg.name}: $${varName}`)
-  .join(', ');
+const getArgsToVarsStr = (dict) =>
+  Object.entries(dict)
+    .map(([varName, arg]) => `${arg.name}: $${varName}`)
+    .join(', ');
 
 /**
  * Generate types string
  * @param dict dictionary of arguments
  */
-const getVarsToTypesStr = dict => Object.entries(dict)
-  .map(([varName, arg]) => `$${varName}: ${arg.type}`)
-  .join(', ');
+const getVarsToTypesStr = (dict) =>
+  Object.entries(dict)
+    .map(([varName, arg]) => `$${varName}: ${arg.type}`)
+    .join(', ');
 
 /**
  * Generate the query for the specified field
@@ -89,7 +92,7 @@ const generateQuery = (
   duplicateArgCounts = {},
   crossReferenceKeyList = [], // [`${curParentName}To${curName}Key`]
   curDepth = 1,
-  fromUnion = false,
+  fromUnion = false
 ) => {
   const field = gqlSchema.getType(curParentType).getFields()[curName];
   const curTypeName = field.type.inspect().replace(/[[\]!]/g, '');
@@ -99,7 +102,10 @@ const generateQuery = (
 
   if (curType.getFields) {
     const crossReferenceKey = `${curParentName}To${curName}Key`;
-    if (crossReferenceKeyList.indexOf(crossReferenceKey) !== -1 || (fromUnion ? curDepth - 2 : curDepth) > depthLimit) return '';
+    if (crossReferenceKeyList.indexOf(crossReferenceKey) !== -1 || (fromUnion ? curDepth - 2 : curDepth) > depthLimit) {
+      console.log(crossReferenceKey);
+      return '';
+    }
     if (!fromUnion) {
       crossReferenceKeyList.push(crossReferenceKey);
     }
@@ -110,10 +116,22 @@ const generateQuery = (
         const fieldSchema = gqlSchema.getType(curType).getFields()[fieldName];
         return includeDeprecatedFields || !fieldSchema.isDeprecated;
       })
-      .map(cur => generateQuery(cur, curType, curName, argumentsDict, duplicateArgCounts,
-        crossReferenceKeyList, curDepth + 1, fromUnion).queryStr)
-      .filter(cur => Boolean(cur))
+      .map(
+        (cur) =>
+          generateQuery(
+            cur,
+            curType,
+            curName,
+            argumentsDict,
+            duplicateArgCounts,
+            crossReferenceKeyList,
+            curDepth + 1,
+            fromUnion
+          ).queryStr
+      )
+      .filter((cur) => Boolean(cur))
       .join('\n');
+    crossReferenceKeyList = [];
   }
 
   if (!(curType.getFields && !childQuery)) {
@@ -140,9 +158,20 @@ const generateQuery = (
         const valueTypeName = types[i];
         const valueType = gqlSchema.getType(valueTypeName);
         const unionChildQuery = Object.keys(valueType.getFields())
-          .map(cur => generateQuery(cur, valueType, curName, argumentsDict, duplicateArgCounts,
-            crossReferenceKeyList, curDepth + 2, true).queryStr)
-          .filter(cur => Boolean(cur))
+          .map(
+            (cur) =>
+              generateQuery(
+                cur,
+                valueType,
+                curName,
+                argumentsDict,
+                duplicateArgCounts,
+                crossReferenceKeyList,
+                curDepth + 2,
+                true
+              ).queryStr
+          )
+          .filter((cur) => Boolean(cur))
           .join('\n');
 
         /* Exclude empty unions */
@@ -162,7 +191,6 @@ const generateQuery = (
  * @param description description of the current object
  */
 const generateFile = (obj, description) => {
-  let indexJs = 'const fs = require(\'fs\');\nconst path = require(\'path\');\n\n';
   let outputFolderName;
   switch (description) {
     case 'Mutation':
@@ -192,29 +220,18 @@ const generateFile = (obj, description) => {
       let query = queryResult.queryStr;
       query = `${description.toLowerCase()} ${type}${varsToTypesStr ? `(${varsToTypesStr})` : ''}{\n${query}\n}`;
       fs.writeFileSync(path.join(writeFolder, `./${type}.${fileExtension}`), query);
-      indexJs += `module.exports.${type} = fs.readFileSync(path.join(__dirname, '${type}.${fileExtension}'), 'utf8');\n`;
     }
   });
-  fs.writeFileSync(path.join(writeFolder, 'index.js'), indexJs);
-  indexJsExportAll += `module.exports.${outputFolderName} = require('./${outputFolderName}');\n`;
 };
 
 if (gqlSchema.getMutationType()) {
   generateFile(gqlSchema.getMutationType().getFields(), 'Mutation');
-} else {
-  console.log('[gqlg warning]:', 'No mutation type found in your schema');
 }
 
 if (gqlSchema.getQueryType()) {
   generateFile(gqlSchema.getQueryType().getFields(), 'Query');
-} else {
-  console.log('[gqlg warning]:', 'No query type found in your schema');
 }
 
 if (gqlSchema.getSubscriptionType()) {
   generateFile(gqlSchema.getSubscriptionType().getFields(), 'Subscription');
-} else {
-  console.log('[gqlg warning]:', 'No subscription type found in your schema');
 }
-
-fs.writeFileSync(path.join(destDirPath, 'index.js'), indexJsExportAll);

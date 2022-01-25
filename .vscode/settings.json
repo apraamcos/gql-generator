@@ -1,0 +1,39 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "prettier.trailingComma": "none",
+  "prettier.tabWidth": 2,
+  "prettier.semi": true,
+  "prettier.singleQuote": false,
+  "prettier.printWidth": 100,
+  "diffEditor.ignoreTrimWhitespace": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "debug.javascript.autoAttachFilter": "always",
+  "git.autofetch": "all",
+  "cSpell.words": [
+    "slsw",
+    "sentryclirc",
+    "onemusic",
+    "apra",
+    "amcos",
+    "postgres",
+    "Middlewares",
+    "typedi",
+    "typeorm",
+    "pems",
+    "USERPOOL",
+    "Signin",
+    "dbname",
+    "NTLM",
+    "firstsignin",
+    "varchar",
+    "openapi",
+    "licence",
+    "cust"
+  ]
+}
