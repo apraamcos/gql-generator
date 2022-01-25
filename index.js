@@ -13,10 +13,7 @@ program
   .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
   .parse(process.argv);
 
-const { depthLimit = 100, includeDeprecatedFields = false, ext: fileExtension } = program;
-
-const schemaFilePath = process.argv[2];
-const destDirPath = process.argv[3];
+const { schemaFilePath, destDirPath, depthLimit = 100, includeDeprecatedFields = false, ext: fileExtension } = program;
 
 const typeDef = fs.readFileSync(schemaFilePath, 'utf-8');
 const source = new Source(typeDef);
@@ -103,7 +100,6 @@ const generateQuery = (
   if (curType.getFields) {
     const crossReferenceKey = `${curParentName}To${curName}Key`;
     if (crossReferenceKeyList.indexOf(crossReferenceKey) !== -1 || (fromUnion ? curDepth - 2 : curDepth) > depthLimit) {
-      console.log(crossReferenceKey);
       return '';
     }
     if (!fromUnion) {
@@ -124,14 +120,13 @@ const generateQuery = (
             curName,
             argumentsDict,
             duplicateArgCounts,
-            crossReferenceKeyList,
+            [...crossReferenceKeyList],
             curDepth + 1,
             fromUnion
           ).queryStr
       )
       .filter((cur) => Boolean(cur))
       .join('\n');
-    crossReferenceKeyList = [];
   }
 
   if (!(curType.getFields && !childQuery)) {
