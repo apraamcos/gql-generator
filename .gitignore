@@ -1,5 +1,6 @@
 # output files of test
 example/output*
+generated
 
 # Logs
 logs
