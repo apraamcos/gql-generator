@@ -8,7 +8,7 @@ const del = require('del');
 program
   .option('--schemaFilePath [value]', 'path of your graphql schema file')
   .option('--destDirPath [value]', 'dir you want to store the generated queries')
-  .option('--currentEnv [value]', 'the env you want to build, build everything without defining it')
+  .option('--isAdmin [value]', 'give "true" if you want to build admin resolvers')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
   .option('--ext [value]', 'extension file to use', 'gql')
   .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
@@ -18,7 +18,8 @@ const {
   schemaFilePath,
   destDirPath,
   depthLimit = 100,
-  currentEnv = '',
+  // currentEnv = '',
+  isAdmin = '',
   includeDeprecatedFields = false,
   ext: fileExtension,
 } = program;
@@ -216,7 +217,7 @@ const generateFile = (obj, description) => {
   }
   Object.keys(obj).forEach((type) => {
     const field = gqlSchema.getType(description).getFields()[type];
-    if (!!currentEnv && field.description && field.description !== currentEnv) {
+    if (isAdmin === 'true' && field.description !== 'admin') {
       return;
     }
     /* Only process non-deprecated queries/mutations: */
