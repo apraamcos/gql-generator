@@ -8,12 +8,20 @@ const del = require('del');
 program
   .option('--schemaFilePath [value]', 'path of your graphql schema file')
   .option('--destDirPath [value]', 'dir you want to store the generated queries')
+  .option('--currentEnv [value]', 'the env you want to build, build everything without defining it')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
   .option('--ext [value]', 'extension file to use', 'gql')
   .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
   .parse(process.argv);
 
-const { schemaFilePath, destDirPath, depthLimit = 100, includeDeprecatedFields = false, ext: fileExtension } = program;
+const {
+  schemaFilePath,
+  destDirPath,
+  depthLimit = 100,
+  currentEnv = '',
+  includeDeprecatedFields = false,
+  ext: fileExtension,
+} = program;
 
 const typeDef = fs.readFileSync(schemaFilePath, 'utf-8');
 const source = new Source(typeDef);
@@ -208,6 +216,10 @@ const generateFile = (obj, description) => {
   }
   Object.keys(obj).forEach((type) => {
     const field = gqlSchema.getType(description).getFields()[type];
+    console.log(field.description);
+    if (!!currentEnv && field.description && field.description !== currentEnv) {
+      return;
+    }
     /* Only process non-deprecated queries/mutations: */
     if (includeDeprecatedFields || !field.isDeprecated) {
       const queryResult = generateQuery(type, description);

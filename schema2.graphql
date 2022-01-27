@@ -35,7 +35,6 @@ enum AGMVoteType {
 enum Access {
   AGM
   CatalogueTransfer
-  Crd
   Distribution
   IDAP
   Idm
@@ -745,7 +744,7 @@ input CueSheetSearchInputWithMemberId {
 
 type CueSheetSearchResult {
   cueSheets: [cueSheetSearch!]!
-  total: Int!
+  total: Float!
 }
 
 enum Currency {
@@ -1188,12 +1187,6 @@ type Feedback {
   uid: String!
   updatedDate: DateTime
   user: User
-}
-
-input FetchCoWritersInput {
-  page: Int = 1
-  rowsPerPage: Int = 5
-  wrthkey: String!
 }
 
 input FetchCueSheetDetailInput {
@@ -1739,7 +1732,6 @@ enum KnownErrorTypes {
   OUTAGE_ERROR
   PRODUCTION_MUSIC_PORTAL_ERROR
   PUBLISHER_WORK_AUDIO_UPLOAD_ERROR
-  RIGHTHOLDER_SEARCH_ERROR
   S3_ERROR
   SOTY_ERROR
   USER_OPERATION_ERROR
@@ -2009,11 +2001,6 @@ type MemberSearchWithPaginationOutput {
   members: [Member!]!
 }
 
-enum MemberTypeFilterOption {
-  publisher
-  writer
-}
-
 type MemberVoteAccess {
   allowLink: Boolean!
   allowView: Boolean!
@@ -2021,12 +2008,7 @@ type MemberVoteAccess {
 }
 
 input MultiTypeKeyword {
-  inputType: TextSearchInputType!
-  keyword: String!
-}
-
-input MultiTypeRightholderName {
-  inputType: TextSearchInputType!
+  inputType: TitleInputType!
   keyword: String!
 }
 
@@ -2041,7 +2023,7 @@ type Mutation {
   # castSotyMemberVote(castSotyMemberVoteInput: CastSotyMemberVoteInput!): SotyMemberVote!
   # castVote(castVoteInput: CastVoteInput!): [VoteTicket!]!
   # castVotePerformance(castVoteInput: CastVoteInput!): [VoteTicket!]!
-  # checkAgmEmailStatus: Boolean!
+  checkAgmEmailStatus: Boolean!
   # commitCwrFiles(commitCwrFilesInput: CommitCwrFilesInput!, memberId: String!): [String!]!
   # confirmApplication(confirmApplicationInput: ConfirmApplicationInput!): Boolean!
   # createAdminUser(createApraAdminInput: CreateAdminInput!): [User!]!
@@ -2052,11 +2034,7 @@ type Mutation {
   # createEnquiryEmail(createEnquiryEmailInput: CreateEnquiryEmailInput!): Boolean
   # createMemberCwrAccess(createMemberCwrAccessInput: CreateMemberCwrAccessInput!): Member!
   # createOrUpdateSotyEvent(sotyEventInput: SotyEventInput!): SotyEvent!
-
-  """
-  admin
-  """
-  createPortalUser(createPortalUserInput: CreatePortalUserInput!): User!
+  # createPortalUser(createPortalUserInput: CreatePortalUserInput!): User!
   # createPortalUserFromAdmin(createPortalUserInput: CreatePortalUserInput!): Boolean
   # createProductionMusicMemberJoin(createProductionMusicMemberJoinInput: CreateProductionMusicMemberJoinInput!): User!
   # createPublisherFeedback(createPublisherFeedbackInput: CreatePublisherFeedbackInput!): Boolean
@@ -2095,103 +2073,42 @@ type Mutation {
   # resetVotePerformance(resetVoteInput: ResetVoteInput!): Boolean!
   # saveAgmCandidate(saveAgmCandidateInput: SaveAgmCandidateInput!): AgmCandidates!
   # saveCwrRecord(cwrRecordInput: SaveCwrRecordInput!, memberId: String!): CwrRecord!
-
-  """
-  admin
-  """
-  saveUserAccesses(saveUserAccessInput: SaveUserMemberAccessesInput!): User!
+  # saveUserAccesses(saveUserAccessInput: SaveUserMemberAccessesInput!): User!
   # saveUserAccessesFromAdmin(saveUserAccessInput: SaveUserMemberAccessesInput!): Boolean
-
-  """
-  private
-  """
-  saveUserFirstNameAndLastName(
-    saveUserFirstNameAndLastNameInput: SaveUserFirstNameAndLastNameInput!
-  ): User!
+  # saveUserFirstNameAndLastName(saveUserFirstNameAndLastNameInput: SaveUserFirstNameAndLastNameInput!): User!
   # saveUserLoginHistory(isLoginFromApp: Boolean = false, memberId: String!): Boolean!
-  # setUserAsPrimaryWriter(
-  #   superAdminSetUserAsPrimaryWriterInput: SuperAdminSetUserAsPrimaryWriterInput!
-  # ): String!
+  # setUserAsPrimaryWriter(superAdminSetUserAsPrimaryWriterInput: SuperAdminSetUserAsPrimaryWriterInput!): String!
   # shutdownPortal(isShutdown: Boolean!): Boolean
   # submitApplicationToCms: Boolean
   # submitFormToCms(signature: String!): String!
-  # submitJingles(
-  #   memberId: String
-  #   s3UploadInputs: [S3UploadInput!]!
-  #   workId: String!
-  # ): SubmitJingleResponse!
+  # submitJingles(memberId: String, s3UploadInputs: [S3UploadInput!]!, workId: String!): SubmitJingleResponse!
   # submitJoinAmcosToCms(writerMemberJoinAmcosInput: WriterMemberJoinAmcosInput!): Boolean!
-  # submitNewApplication(
-  #   createNewApplicationInput: CreateNewApplicationInput!
-  # ): CreateNewApplicationOutput!
+  # submitNewApplication(createNewApplicationInput: CreateNewApplicationInput!): CreateNewApplicationOutput!
   # syncEbenData: Boolean!
   # unlinkPushTokenWithMember(memberId: String!, token: String!): PushTokenAssociationResult!
   # updateAGMDocumentList(agmDocumentInput: [AGMDocumentInput!]!): [AGMDocument!]!
-  # updateAddressDetails(
-  #   addressDetailsInput: WriterJoinAddressDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
+  # updateAddressDetails(addressDetailsInput: WriterJoinAddressDetailsInput!, timestamp: String!): UpdateStepResponse!
   # updateAdminUser(updateAdminInput: UpdateAdminInput!): [User!]!
   # updateAdminUserAfterCompleteChallenge: User!
   # updateAmcosTerritory(territory: Territory!, timestamp: String!): UpdateStepResponse!
-  # updateBankDetails(
-  #   bankDetailsInput: WriterJoinBankDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
-  # updateBusinessDetails(
-  #   businessDetailsInput: WriterJoinBusinessDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
-  # updateContactDetails(
-  #   contactDetailsInput: WriterJoinContactDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
+  # updateBankDetails(bankDetailsInput: WriterJoinBankDetailsInput!, timestamp: String!): UpdateStepResponse!
+  # updateBusinessDetails(businessDetailsInput: WriterJoinBusinessDetailsInput!, timestamp: String!): UpdateStepResponse!
+  # updateContactDetails(contactDetailsInput: WriterJoinContactDetailsInput!, timestamp: String!): UpdateStepResponse!
   # updateDistributionNotes(updateDistributionNotesInput: CUDistributionNotesInput!): Boolean!
-  # updateDistributionNotesDetails(
-  #   updateDistributionNotesDetailsInput: CUDistributionNotesDetailsInput!
-  # ): Boolean!
-  # updateEligibility(
-  #   eligibilityInput: WriterJoinEligibilityInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
+  # updateDistributionNotesDetails(updateDistributionNotesDetailsInput: CUDistributionNotesDetailsInput!): Boolean!
+  # updateEligibility(eligibilityInput: WriterJoinEligibilityInput!, timestamp: String!): UpdateStepResponse!
   # updateFormProgress(identifier: JoinStepIdentifier!, timestamp: String!): UpdateStepResponse!
-  # updateGenreDetails(
-  #   genreDetailsInput: WriterJoinGenreDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
+  # updateGenreDetails(genreDetailsInput: WriterJoinGenreDetailsInput!, timestamp: String!): UpdateStepResponse!
   # updateMemberCwrAccess(updateMemberCwrAccessInput: UpdateMemberCwrAccessInput!): Member!
   # updateMemberDetailsLambda(updateMemberDetailsInput: UpdateMemberDetailsInput!): Boolean
-  # updateParentConsent(
-  #   parentConsentInput: WriterJoinParentConsentInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
-  # updatePerformerDetails(
-  #   performerDetailsInput: WriterJoinPerformerDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
-  # updatePersonalDetails(
-  #   personalDetailsInput: WriterJoinPersonalDetailsInput!
-  #   timestamp: String!
-  # ): UpdateStepResponse!
-  # updateProductionMusicMemberJoin(
-  #   updateProductionMusicMemberJoinInput: UpdateProductionMusicMemberJoinInput!
-  # ): ProductionMusicMemberJoin
-  # updatePublisherAddressDetails(
-  #   memberId: String!
-  #   publisherAddressDetailsInput: [BaseMemberAddressDetailsInput!]!
-  # ): [BaseMemberAddressDetails!]!
-  # updatePublisherBankDetails(
-  #   memberId: String!
-  #   publisherBankDetailsInput: BaseMemberBankDetailsInput!
-  # ): BaseMemberBankDetails!
-  # updatePublisherContactDetails(
-  #   memberId: String!
-  #   publisherContactDetailsInput: [MemberContactDetailsInput!]!
-  # ): [MemberContactDetails!]
-  # updatePublisherEntityDetails(
-  #   memberId: String!
-  #   publisherEntityDetailsInput: MemberEntityDetailsInput!
-  # ): MemberEntityDetails!
+  # updateParentConsent(parentConsentInput: WriterJoinParentConsentInput!, timestamp: String!): UpdateStepResponse!
+  # updatePerformerDetails(performerDetailsInput: WriterJoinPerformerDetailsInput!, timestamp: String!): UpdateStepResponse!
+  # updatePersonalDetails(personalDetailsInput: WriterJoinPersonalDetailsInput!, timestamp: String!): UpdateStepResponse!
+  # updateProductionMusicMemberJoin(updateProductionMusicMemberJoinInput: UpdateProductionMusicMemberJoinInput!): ProductionMusicMemberJoin
+  # updatePublisherAddressDetails(memberId: String!, publisherAddressDetailsInput: [BaseMemberAddressDetailsInput!]!): [BaseMemberAddressDetails!]!
+  # updatePublisherBankDetails(memberId: String!, publisherBankDetailsInput: BaseMemberBankDetailsInput!): BaseMemberBankDetails!
+  # updatePublisherContactDetails(memberId: String!, publisherContactDetailsInput: [MemberContactDetailsInput!]!): [MemberContactDetails!]
+  # updatePublisherEntityDetails(memberId: String!, publisherEntityDetailsInput: MemberEntityDetailsInput!): MemberEntityDetails!
   # updatePublisherPortalNews(
   #   updatePublisherPortalNewsInput: UpdatePublisherPortalNewsInput!
   # ): Boolean!
@@ -2200,8 +2117,8 @@ type Mutation {
   # ): MemberExtraInfoSocialLinks!
   # updateSetList(updateSetlistInput: UpdateSetListInput!): Boolean!
   # updateSotyEventStatus(eventId: Int!, eventStatus: SotyEventStatus!): SotyEvent!
-  # updateUserAfterCompleteChallenge: User!
-  # updateUserEmailByUid(email: String!, uid: String!): User
+  # # updateUserAfterCompleteChallenge: User!
+  # # updateUserEmailByUid(email: String!, uid: String!): User
   # updateUserNameByUid(firstName: String!, lastName: String!, uid: String!): Boolean
   # updateWorkDetailsForMobileLambda(updateWorkDetailsInput: UpdateWorkDetailsInput!): Boolean!
   # updateWorkDetailsLambda(updateWorkDetailsInput: UpdateWorkDetailsInput!): Boolean!
@@ -2517,7 +2434,7 @@ type Query {
   #   title: String!
   #   writers: String
   # ): SearchAllCmsWorksOutput!
-  SearchWriterMemberWorks(workSearchInput: WorkSearchInputWithMemberId!): WorkSearchResult!
+  # SearchWriterMemberWorks(workSearchInput: WorkSearchInputWithMemberId!): WorkSearchResult!
   # adminDownloadJingleFile(jingleDownloadInput: JingleDownloadInput!): String
   # adminGetAGMCandidates: GetCandidatesOutput!
   # adminGetDocumentSignedUrl(
@@ -2525,11 +2442,7 @@ type Query {
   # ): S3UploadResponse!
   # adminGetJingleSignedUrl(getJingleSignedURLInput: GetJingleSignedURLInput!): S3UploadResponse!
   # checkApiVersion(apiName: ApiNames!): ApiInfoOutput!
-
-  """
-  private
-  """
-  checkIfEmailExist(email: String!): Boolean!
+  # checkIfEmailExist(email: String!): Boolean!
   # checkIfEmailExistFromAdmin(email: String!): Boolean!
   # checkIfEmailInProgressOfWriterRegisterFromAdmin(email: String!): Boolean!
   # checkIfMermberPendingJoinAmcos(memberId: String!): Boolean!
@@ -2540,7 +2453,6 @@ type Query {
   # downloadJingleFile(jingleDownloadInput: JingleDownloadInput!): String
   # downloadSongList(fileName: String!): String!
   # downloadUserFile(fileName: String!, s3FileType: S3FileType!): String!
-  # fetchCoWriters(fetchCoWritersInput: FetchCoWritersInput!): fetchCoWriterDetailOutput!
   # fetchCueSheet(cueSheetSearchInput: CueSheetSearchInputWithMemberId!): CueSheetSearchResult!
   # fetchCueSheetDetailPublisher(fetchCueSheetDetailInput: FetchCueSheetDetailInput!): cueSheetDetail
   # fetchCwrHistory(fetchCwrHistoryInput: FetchCwrHistoryInput!): FetchCwrHistoryOutput!
@@ -2562,7 +2474,7 @@ type Query {
   # getAGMCandidates: GetCandidatesOutput!
   # getAGMDocumentGroup: [DocumentGroup!]!
   # getAGMDocumentLink(memberId: String!, resourceName: String!): String!
-  # getAdminUser: User!
+  getAdminUser: User!
   # getAdminUsers: [User!]!
   # getApplicationHistory(
   #   getApplicationHistoryInput: GetApplicationHistoryInput!
@@ -2574,8 +2486,8 @@ type Query {
   # getConfigs: [Config!]!
   # getCountryList: [Country!]!
   # getCurrentDistributionLabel: CurrentDistributionOutput!
+  # getCurrentEvent: SotyEventWithTotalVotes
   # getCurrentSotyEvent: GetUserSotyEventOutput
-  # getCurrentSotyEventForAdmin: SotyEventWithTotalVotes
   # getCwrDownloadUrl(getCwrDownloadUrlInput: GetCwrDownloadUrlInput!): String!
   # getCwrUploadUrl(getCwrUploadUrlInput: GetCwrUploadUrlInput!): String!
   # getDistributionDetails(
@@ -2722,20 +2634,20 @@ type Query {
   # getJingleById(jingleId: Float!): Jingle
   # getJingleSignedUrl(getJingleSignedURLInput: GetJingleSignedURLInput!): S3UploadResponse!
   # getLandingPagePDF(landingPagePDFInput: LandingPagePDFInputType!): Boolean
-  # getMemberById(memberId: String!): Member
+  # # getMemberById(memberId: String!): Member
   # getMemberDetails(memberId: String!): MemberDetails!
   # getMemberDetailsLambda(memberId: String): GetMemberDetailResult!
   # getMemberListExcelDownloadUrl: String!
   # getMemberNameById(memberId: String!): String
   # getOutageBannerConfig(isApp: Boolean!): String!
   # getPaymentSummaryPDF(paymentSummaryPDFInput: PaymentSummaryPDFInput!): String
-  # getProductionMusicMemberJoinById(id: String!): ProductionMusicMemberJoin
+  # # getProductionMusicMemberJoinById(id: String!): ProductionMusicMemberJoin
   # getProductionMusicQuote: GetQuoteOutput!
   # getPublisherDocumentGroup(memberId: String!): [DocumentGroup!]!
   # getPublisherDocumentLink(memberId: String!, resourceName: String!): String!
-  # getPublisherFeedback(
-  #   getPublisherFeedbackInput: GetPublisherFeedbackInput!
-  # ): GetPublisherFeedbackOutput!
+  # # getPublisherFeedback(
+  # #   getPublisherFeedbackInput: GetPublisherFeedbackInput!
+  # # ): GetPublisherFeedbackOutput!
   # getPublisherNewsDetail(id: String!, memberId: String!): News
   # getPublisherPortalLatestNews(
   #   getPublisherPortalNewsInput: GetPublisherPortalNewsInput!
@@ -2750,13 +2662,9 @@ type Query {
   # getSotySongs(getSotySongsInput: GetSotySongsInput!): GetSotySongsOutput!
   # getTaxInvoicePDF(invoicePaymentPDFInput: InvoicePaymentPDFInput!): Boolean
   # getTopVotedSongsForCurrentEvent: TopVotedSongsOutput!
-
-  """
-  private
-  """
-  getUser: User!
-  # getUserByEmail(email: String!): User
-  # getUserByUidFromAdmin(uid: String!): User
+  # # getUser: User!
+  # # getUserByEmail(email: String!): User
+  # # getUserByUidFromAdmin(uid: String!): User
   # getVoteTickets(memberId: String!): [VoteTicket!]!
   # getWorkDetailAndAudiosByWorkId(getWorkDetailAndAudiosInput: GetWorkDetailAndAudiosInput!): Winf
   # getWorkEarningDistributionSummary(
@@ -2825,9 +2733,6 @@ type Query {
   # searchProductionMusicMemberJoins(
   #   productionMusicMemberJoinSearchInput: ProductionMusicMemberJoinSearchInput!
   # ): ProductionMusicMemberJoinSearchOutput!
-  # searchRightholderPublisher(
-  #   rightholderSearchInput: RightholderSearchInputWithMemberId!
-  # ): RightholderSearchResult!
   # searchUsersWithPagination(
   #   userSearchWithPaginationInput: UserSearchWithPaginationInput!
   # ): UserSearchWithPaginationOutput
@@ -2841,9 +2746,9 @@ type Query {
   # searchWorksWithPagination(
   #   jingleAdminSearchWorkInput: JingleAdminSearchWorkInput!
   # ): JingleAdminSearchWorkOutput
-  # searchWriterApplicationsWithPagination(
-  #   writerApplicationSearchInput: WriterApplicationSearchInput!
-  # ): WriterApplicationSearchOutput
+  # # searchWriterApplicationsWithPagination(
+  # #   writerApplicationSearchInput: WriterApplicationSearchInput!
+  # # ): WriterApplicationSearchOutput
   # uploadCandidateAvatar(fileName: String!): S3UploadResponse!
   # uploadEnquiryAttachment(fileName: String!, memberId: String!): S3UploadResponse!
   # uploadNewsImage(fileName: String!): S3UploadResponse!
@@ -2984,7 +2889,7 @@ enum RightType {
   Syncronisation
 }
 
-input RightholderInAutoSuggestWorkSearch {
+input RightholderInWorkSearch {
   """
   Is term is true when auto complete result is picked
   """
@@ -3017,83 +2922,6 @@ enum RightholderNameAutoCompletionType {
   performer
   publisher
   writer
-}
-
-type RightholderSearchCoWriter {
-  mrSoc: String!
-  numOfWorks: Int!
-  prSoc: String!
-  sharerName: String!
-  wrthkey: String!
-}
-
-input RightholderSearchInputWithMemberId {
-  """
-  IPI
-  """
-  ipi: String
-
-  """
-  Member ID for validateMember decorator
-  """
-  memberId: String!
-
-  """
-  Member key
-  """
-  memberKey: String
-
-  """
-  memberType
-  """
-  memberTypes: [MemberTypeFilterOption!]
-
-  """
-  Rightholder name
-  """
-  name: MultiTypeRightholderName
-
-  """
-  pagination skip
-  """
-  skip: Float = 0
-
-  """
-  Society name or number field
-  """
-  societyNameOrNumber: String
-
-  """
-  sorting options are against all the searching fields
-  """
-  sortBy: RightholderSearchSort
-
-  """
-  pagination count
-  """
-  take: Float = 12
-}
-
-type RightholderSearchResult {
-  rightholders: [rightholderSearch!]!
-  total: Int!
-}
-
-input RightholderSearchSort {
-  key: RightholderSearchSortKey!
-  order: SortOrder = asc
-}
-
-enum RightholderSearchSortKey {
-  category
-  ipi
-  mechanicalSocietyAcronym
-  memberKeys
-  name
-  nameType
-  performanceSocietyAcronym
-  yearBirth
-  yearDied
 }
 
 enum Role {
@@ -3275,11 +3103,6 @@ input SingleGenreInput {
   status: Boolean!
 }
 
-enum SortOrder {
-  asc
-  desc
-}
-
 type SotyEvent {
   createdByUid: String
   fromDate: DateTime!
@@ -3445,18 +3268,18 @@ type TerritoryCode {
   translation: String!
 }
 
-enum TextSearchInputType {
-  Contained
-  Exact
-  StartWith
-}
-
 enum Title {
   DR
   MISS
   MR
   MRS
   MS
+}
+
+enum TitleInputType {
+  Contained
+  Exact
+  StartWith
 }
 
 type TopVotedSong {
@@ -3964,8 +3787,8 @@ input WorkSearchInput {
   lastPaid: Boolean
   lastPerformed: Boolean
   origin: WorkSearchOrigin
-  performer: RightholderInAutoSuggestWorkSearch
-  publisher: RightholderInAutoSuggestWorkSearch
+  performer: RightholderInWorkSearch
+  publisher: RightholderInWorkSearch
 
   """
   pagination skip
@@ -3990,13 +3813,13 @@ input WorkSearchInput {
   """
   how does the keywords match? contains? exact? or start with
   """
-  titleInputType: TextSearchInputType
+  titleInputType: TitleInputType
 
   """
   winfkey
   """
   winfkey: String
-  writer: RightholderInAutoSuggestWorkSearch
+  writer: RightholderInWorkSearch
 }
 
 input WorkSearchInputForProductionMusic {
@@ -4015,7 +3838,7 @@ input WorkSearchInputForProductionMusic {
   """
   take: Float = 12
   title: String
-  writer: RightholderInAutoSuggestWorkSearch
+  writer: RightholderInWorkSearch
 }
 
 input WorkSearchInputWithMemberId {
@@ -4048,8 +3871,8 @@ input WorkSearchInputWithMemberId {
   """
   memberId: String!
   origin: WorkSearchOrigin
-  performer: RightholderInAutoSuggestWorkSearch
-  publisher: RightholderInAutoSuggestWorkSearch
+  performer: RightholderInWorkSearch
+  publisher: RightholderInWorkSearch
 
   """
   pagination skip
@@ -4074,13 +3897,13 @@ input WorkSearchInputWithMemberId {
   """
   how does the keywords match? contains? exact? or start with
   """
-  titleInputType: TextSearchInputType
+  titleInputType: TitleInputType
 
   """
   winfkey
   """
   winfkey: String
-  writer: RightholderInAutoSuggestWorkSearch
+  writer: RightholderInWorkSearch
 }
 
 enum WorkSearchOrigin {
@@ -4452,26 +4275,6 @@ type elasticsearchSource {
   status: ElasticSearchSourceStatus!
   tables: [String!]!
   topic: String
-}
-
-type fetchCoWriterDetailOutput {
-  coWriters: [RightholderSearchCoWriter!]!
-  total: Int!
-}
-
-type rightholderSearch {
-  category: String!
-  firstName: String!
-  ipi: String!
-  isApraDb: Boolean!
-  memberkey: String
-  mrSoc: String
-  nameType: String
-  prSoc: String
-  surname: String!
-  withCoWriters: Boolean!
-  yearBirth: Int
-  yearDied: Int
 }
 
 type workCueSheetDurations {
