@@ -18,7 +18,6 @@ const {
   schemaFilePath,
   destDirPath,
   depthLimit = 100,
-  // currentEnv = '',
   isAdmin = '',
   includeDeprecatedFields = false,
   ext: fileExtension,
