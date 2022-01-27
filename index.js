@@ -216,7 +216,10 @@ const generateFile = (obj, description) => {
   }
   Object.keys(obj).forEach((type) => {
     const field = gqlSchema.getType(description).getFields()[type];
-    if (isAdmin === 'true' && field.description !== 'admin') {
+    if (
+      (isAdmin === 'true' && field.description !== 'admin') ||
+      (isAdmin !== 'true' && field.description === 'admin')
+    ) {
       return;
     }
     /* Only process non-deprecated queries/mutations: */
