@@ -216,7 +216,6 @@ const generateFile = (obj, description) => {
   }
   Object.keys(obj).forEach((type) => {
     const field = gqlSchema.getType(description).getFields()[type];
-    console.log(field.description);
     if (!!currentEnv && field.description && field.description !== currentEnv) {
       return;
     }
