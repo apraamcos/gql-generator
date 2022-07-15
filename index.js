@@ -9,6 +9,7 @@ program
   .option('--schemaFilePath [value]', 'path of your graphql schema file')
   .option('--destDirPath [value]', 'dir you want to store the generated queries')
   .option('--isAdmin [value]', 'give "true" if you want to build admin resolvers')
+  .option('--existingQueryPath [value]', 'dir for existing queries')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
   .option('--ext [value]', 'extension file to use', 'gql')
   .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
@@ -19,9 +20,28 @@ const {
   destDirPath,
   depthLimit = 100,
   isAdmin = '',
+  existingQueryPath = '',
   includeDeprecatedFields = false,
   ext: fileExtension,
 } = program;
+
+const existingQueries = [];
+if (existingQueryPath) {
+  const existingQueryFileNames = fs.readdirSync(existingQueryPath);
+  existingQueryFileNames.forEach((x) => {
+    const queries = fs
+      .readFileSync(`${existingQueryPath}/${x}`, { encoding: 'utf-8' })
+      .split('\n')
+      .filter((x) => x.trim().startsWith('mutation ') || x.trim().startsWith('query '))
+      .map((x) => {
+        return x.split('(')[0];
+      })
+      .map((x) => {
+        return x.split(' ')[1];
+      });
+    existingQueries.push(...queries);
+  });
+}
 
 const typeDef = fs.readFileSync(schemaFilePath, 'utf-8');
 const source = new Source(typeDef);
@@ -220,6 +240,9 @@ const generateFile = (obj, description) => {
       (isAdmin === 'true' && field.description !== 'admin' && field.description !== 'both') ||
       (isAdmin !== 'true' && field.description === 'admin')
     ) {
+      return;
+    }
+    if (existingQueries.includes(type)) {
       return;
     }
     /* Only process non-deprecated queries/mutations: */
