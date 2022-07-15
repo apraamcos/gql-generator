@@ -27,20 +27,22 @@ const {
 
 const customisedQueries = [];
 if (customisedQueryPath) {
-  const customisedQueryFileNames = fs.readdirSync(customisedQueryPath);
-  customisedQueryFileNames.forEach((x) => {
-    const queries = fs
-      .readFileSync(`${customisedQueryPath}/${x}`, { encoding: 'utf-8' })
-      .split('\n')
-      .filter((x) => x.trim().startsWith('mutation ') || x.trim().startsWith('query '))
-      .map((x) => {
-        return x.split('(')[0];
-      })
-      .map((x) => {
-        return x.split(' ')[1];
-      });
-    customisedQueries.push(...queries);
-  });
+  try {
+    const customisedQueryFileNames = fs.readdirSync(customisedQueryPath);
+    customisedQueryFileNames.forEach((x) => {
+      const queries = fs
+        .readFileSync(`${customisedQueryPath}/${x}`, { encoding: 'utf-8' })
+        .split('\n')
+        .filter((x) => x.trim().startsWith('mutation ') || x.trim().startsWith('query '))
+        .map((x) => {
+          return x.split('(')[0];
+        })
+        .map((x) => {
+          return x.split(' ')[1];
+        });
+      customisedQueries.push(...queries);
+    });
+  } catch {}
 }
 
 const typeDef = fs.readFileSync(schemaFilePath, 'utf-8');
