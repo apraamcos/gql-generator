@@ -42,7 +42,11 @@ if (customisedQueryPath) {
         });
       customisedQueries.push(...queries);
     });
-  } catch {}
+  } catch (e) {
+    if (e.code !== 'ENOENT') {
+      throw e;
+    }
+  }
 }
 
 const typeDef = fs.readFileSync(schemaFilePath, 'utf-8');
