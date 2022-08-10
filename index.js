@@ -9,6 +9,7 @@ program
   .option('--schemaFilePath [value]', 'path of your graphql schema file')
   .option('--destDirPath [value]', 'dir you want to store the generated queries')
   .option('--isAdmin [value]', 'give "true" if you want to build admin resolvers')
+  .option('--isMobile [value]', 'give "true" if you want to build mobile resolvers')
   .option('--customisedQueryPath [value]', 'path of your customised queries')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
   .option('--ext [value]', 'extension file to use', 'gql')
@@ -20,6 +21,7 @@ const {
   destDirPath,
   depthLimit = 100,
   isAdmin = '',
+  isMobile = '',
   customisedQueryPath = '',
   includeDeprecatedFields = false,
   ext: fileExtension,
@@ -243,9 +245,12 @@ const generateFile = (obj, description) => {
   Object.keys(obj).forEach((type) => {
     const field = gqlSchema.getType(description).getFields()[type];
     if (
-      (isAdmin === 'true' && field.description !== 'admin' && field.description !== 'both') ||
+      (isAdmin === 'true' && field.description !== 'admin') ||
       (isAdmin !== 'true' && field.description === 'admin')
     ) {
+      return;
+    }
+    if (isMobile === 'true' && !(field.description && field.description.includes('mobile'))) {
       return;
     }
     if (customisedQueries.includes(type)) {
