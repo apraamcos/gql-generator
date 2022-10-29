@@ -254,10 +254,13 @@ const generateFile = (obj, description) => {
     ) {
       return;
     }
-    if (isMobile === 'true' && !(field.description && field.description.includes('mobile'))) {
+    if (
+      (isWebsite === 'true' && field.description !== 'website') ||
+      (isWebsite !== 'true' && field.description === 'website')
+    ) {
       return;
     }
-    if (isWebsite === 'true' && !(field.description && field.description.includes('website'))) {
+    if (isMobile === 'true' && !(field.description && field.description.includes('mobile'))) {
       return;
     }
     if (isShared === 'true') {
