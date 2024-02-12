@@ -11,6 +11,7 @@ program
   .option('--isAdmin [value]', 'give "true" if you want to build admin resolvers')
   .option('--isMobile [value]', 'give "true" if you want to build mobile resolvers')
   .option('--isWebsite [value]', 'give "true" if you want to build website resolvers')
+  .option('--isWebsiteBot [value]', 'give "true" if you want to build website resolvers')
   .option('--isShared [value]', 'give "true" if you want to build shared types')
   .option('--customisedQueryPath [value]', 'path of your customised queries')
   .option('--depthLimit [value]', 'query depth you want to limit(The default is 100)')
@@ -25,6 +26,7 @@ const {
   isAdmin = '',
   isMobile = '',
   isWebsite = '',
+  isWebsiteBot = '',
   isShared = '',
   customisedQueryPath = '',
   includeDeprecatedFields = false,
@@ -257,6 +259,12 @@ const generateFile = (obj, description) => {
     if (
       (isWebsite === 'true' && field.description !== 'website') ||
       (isWebsite !== 'true' && field.description === 'website')
+    ) {
+      return;
+    }
+    if (
+      (isWebsiteBot === 'true' && field.description !== 'website-bot') ||
+      (isWebsiteBot !== 'true' && field.description === 'website-bot')
     ) {
       return;
     }
