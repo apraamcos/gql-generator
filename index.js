@@ -56,7 +56,6 @@ function main({
     }
     return path.join(before, cur + path.sep);
   }, '');
-  let indexJsExportAll = '';
 
   /**
    * Compile arguments dictionary for a field
@@ -210,7 +209,6 @@ function main({
    * @param description description of the current object
    */
   const generateFile = (obj, description) => {
-    let indexJs = 'const fs = require(\'fs\');\nconst path = require(\'path\');\n\n';
     let outputFolderName;
     switch (true) {
       case /Mutation.*$/.test(description):
@@ -281,32 +279,21 @@ function main({
         }
         query = `${queryName || description.toLowerCase()} ${type}${varsToTypesStr ? `(${varsToTypesStr})` : ''}{\n${query}\n}`;
         fs.writeFileSync(path.join(writeFolder, `./${type}.${fileExtension}`), query);
-        indexJs += `module.exports.${type} = fs.readFileSync(path.join(__dirname, '${type}.${fileExtension}'), 'utf8');\n`;
       }
     });
-    fs.writeFileSync(path.join(writeFolder, 'index.js'), indexJs);
-    indexJsExportAll += `module.exports.${outputFolderName} = require('./${outputFolderName}');\n`;
   };
 
   if (gqlSchema.getMutationType()) {
     generateFile(gqlSchema.getMutationType().getFields(), gqlSchema.getMutationType().name);
-  } else {
-    console.log('[gqlg warning]:', 'No mutation type found in your schema');
   }
 
   if (gqlSchema.getQueryType()) {
     generateFile(gqlSchema.getQueryType().getFields(), gqlSchema.getQueryType().name);
-  } else {
-    console.log('[gqlg warning]:', 'No query type found in your schema');
   }
 
   if (gqlSchema.getSubscriptionType()) {
     generateFile(gqlSchema.getSubscriptionType().getFields(), gqlSchema.getSubscriptionType().name);
-  } else {
-    console.log('[gqlg warning]:', 'No subscription type found in your schema');
   }
-
-  fs.writeFileSync(path.join(destDirPath, 'index.js'), indexJsExportAll);
 }
 
 module.exports = main;
