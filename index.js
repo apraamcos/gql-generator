@@ -9,11 +9,36 @@ function main({
   schemaFilePath,
   destDirPath,
   depthLimit = 100,
+  isAdmin = '',
+  isMobile = '',
+  isWebsite = '',
+  isShared = '',
+  customisedQueryPath = '',
   includeDeprecatedFields = false,
   fileExtension,
   assumeValid,
   includeCrossReferences = false,
 } = {}) {
+  const customisedQueries = [];
+  if (customisedQueryPath) {
+    try {
+      const customisedQueryFileNames = fs.readdirSync(customisedQueryPath);
+      customisedQueryFileNames.forEach((x) => {
+        const queries = fs
+          .readFileSync(`${customisedQueryPath}/${x}`, { encoding: 'utf-8' })
+          .split('\n')
+          .filter((y) => y.trim().startsWith('mutation ') || y.trim().startsWith('query '))
+          .map((y) => y.split('(')[0])
+          .map((y) => y.split(' ')[1]);
+        customisedQueries.push(...queries);
+      });
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        throw e;
+      }
+    }
+  }
+
   let assume = false;
   if (assumeValid === 'true') {
     assume = true;
@@ -211,6 +236,27 @@ function main({
     }
     Object.keys(obj).forEach((type) => {
       const field = gqlSchema.getType(description).getFields()[type];
+      if (
+        (isAdmin === 'true' && field.description !== 'admin')
+        || (isAdmin !== 'true' && field.description === 'admin')
+      ) {
+        return;
+      }
+      if (
+        (isWebsite === 'true' && field.description !== 'website')
+        || (isWebsite !== 'true' && field.description === 'website')
+      ) {
+        return;
+      }
+      if (isMobile === 'true' && !(field.description && field.description.includes('mobile'))) {
+        return;
+      }
+      if (isShared === 'true') {
+        return;
+      }
+      if (customisedQueries.includes(type)) {
+        return;
+      }
       /* Only process non-deprecated queries/mutations: */
       if (includeDeprecatedFields || !field.deprecationReason) {
         const queryResult = generateQuery(type, description);
@@ -273,6 +319,11 @@ if (require.main === module) {
     .option('--depthLimit [value]', 'query depth you want to limit (The default is 100)')
     .option('--assumeValid [value]', 'assume the SDL is valid (The default is false)')
     .option('--ext [value]', 'extension file to use', 'gql')
+    .option('--isAdmin [value]', 'give "true" if you want to build admin resolvers')
+    .option('--isMobile [value]', 'give "true" if you want to build mobile resolvers')
+    .option('--isWebsite [value]', 'give "true" if you want to build website resolvers')
+    .option('--isShared [value]', 'give "true" if you want to build shared types')
+    .option('--customisedQueryPath [value]', 'path of your customised queries')
     .option('-C, --includeDeprecatedFields [value]', 'Flag to include deprecated fields (The default is to exclude)')
     .option('-R, --includeCrossReferences', 'Flag to include fields that have been added to parent queries already (The default is to exclude)')
     .showHelpAfterError()
