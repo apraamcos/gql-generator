@@ -4,11 +4,7 @@
     "no-console": "off",
     "global-require": "off",
     "no-plusplus": "off",
-    "no-param-reassign": "warn",
-    "linebreak-style": "off",
-    "max-len": "off",
-    "eslintimplicit-arrow-linebreak": "off",
-    "eslintimplicit-arrow-linebreak": "off"
+    "no-param-reassign": "warn"
   },
   "env": {
     "mocha": true
