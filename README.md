@@ -74,6 +74,16 @@ mutation signup($username: String!, email: String!, password: String!){
 
 The tool will automatically exclude any `@deprecated` schema fields (see more on schema directives [here](https://www.apollographql.com/docs/graphql-tools/schema-directives)). To change this behavior to include deprecated fields you can use the `includeDeprecatedFields` flag when running the tool, e.g. `gqlg --includeDeprecatedFields`.
 
+### Programmatic Access
+
+Alternatively, you can run `gql-generator` directly from your scripts:
+
+```js
+const gqlg = require('gql-generator')
+
+gqlg({ schemaFilePath: './example/sampleTypeDef.graphql', destDirPath: './example/output', depthLimit: 5 })
+```
+
 ## Usage example
 
 Say you have a graphql schema like this: 
@@ -156,7 +166,6 @@ test('signup', async () => {
 
 ## Notes
 
-- As this tool is used for tests, it expands all of the fields in a query. There might be recursive fields in the query, so `gqlg` ignores the types which have been added in the parent queries already.
+- As this tool is used for tests, it expands all of the fields in a query. There might be recursive fields in the query, so `gqlg` ignores the types which have been added in the parent queries already by default. This can be disabled using the `--includeCrossReferences` argument.
 - Variable names are derived from argument names, so variables generated from multiple occurrences of the same argument name must be deduped. An index is appended to any duplicates e.g. `region(language: $language1)`.
 
-> [Donate with bitcoin](https://getcryptoo.github.io/)
