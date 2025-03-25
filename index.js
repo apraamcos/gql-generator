@@ -249,7 +249,7 @@ function main({
       if (isMobile === 'true' && !(field.description && field.description.includes('mobile'))) {
         return;
       }
-      if (isShared === 'true') {
+      if (isShared === 'true' && field.description !== 'shared') {
         return;
       }
       if (customisedQueries.includes(type)) {
