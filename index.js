@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const program = require('commander');
+const { program } = require('commander');
 const { Source, buildSchema } = require('graphql');
 const { rimrafSync } = require('rimraf');
 
@@ -56,6 +56,8 @@ function main({
     }
     return path.join(before, cur + path.sep);
   }, '');
+
+  let indexJsExportAll = '';
 
   /**
    * Compile arguments dictionary for a field
@@ -209,6 +211,7 @@ function main({
    * @param description description of the current object
    */
   const generateFile = (obj, description) => {
+    let indexJs = "const fs = require('fs');\nconst path = require('path');\n\n";
     let outputFolderName;
     switch (true) {
       case /Mutation.*$/.test(description):
@@ -279,8 +282,12 @@ function main({
         }
         query = `${queryName || description.toLowerCase()} ${type}${varsToTypesStr ? `(${varsToTypesStr})` : ''}{\n${query}\n}`;
         fs.writeFileSync(path.join(writeFolder, `./${type}.${fileExtension}`), query);
+        indexJs += `module.exports.${type} = fs.readFileSync(path.join(__dirname, '${type}.${fileExtension}'), 'utf8');\n`;
       }
     });
+
+    fs.writeFileSync(path.join(writeFolder, 'index.js'), indexJs);
+    indexJsExportAll += `module.exports.${outputFolderName} = require('./${outputFolderName}');\n`;
   };
 
   if (gqlSchema.getMutationType()) {
@@ -294,6 +301,8 @@ function main({
   if (gqlSchema.getSubscriptionType()) {
     generateFile(gqlSchema.getSubscriptionType().getFields(), gqlSchema.getSubscriptionType().name);
   }
+
+  fs.writeFileSync(path.join(destDirPath, 'index.js'), indexJsExportAll);
 }
 
 module.exports = main;
