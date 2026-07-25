@@ -64,3 +64,6 @@ typings/
 # webstorm settings
 .idea
 
+# this project uses pnpm; avoid stray npm lockfiles
+package-lock.json
+
